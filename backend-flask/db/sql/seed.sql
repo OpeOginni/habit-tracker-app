@@ -1,5 +1,5 @@
 INSERT INTO
-    public.habits (name, description, periodicity)
+    habits (name, description, periodicity)
 VALUES
     ('Read a Book', 'Spend some time reading a book everyday', 'DAILY'),
     ('Exercise', 'Engage in physical activity to stay healthy', 'WEEKLY'),

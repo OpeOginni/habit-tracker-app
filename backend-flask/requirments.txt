@@ -2,3 +2,5 @@ flask
 flask-cors
 
 sqlite3
+
+python-dotenv

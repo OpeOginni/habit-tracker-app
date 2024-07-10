@@ -8,19 +8,19 @@ from classes.habits import Habit
 def load(app):
     @app.route("/api/habits", methods=["GET"])
     def get_habits():
-        habit = Habit('')
+        habit = Habit()
         habits = habit.get_all_habits()
         return {'habits': habits}, 200
     
     @app.route("/api/habits/<string:habit_name>", methods=["GET"])
     def get_habit(habit_name):
-        habit = Habit('')
+        habit = Habit()
         habit_data = habit.get_habit(habit_name)
         return {'habit': habit_data}, 200
     
     @app.route("/api/habits/periodicity/<string:periodicity>", methods=["GET"])
     def get_habit_by_periodicity(periodicity):
-        habit = Habit('')
+        habit = Habit()
         habits = habit.get_habit_by_periodicity(periodicity)
         return {'habits': habits}, 200
     

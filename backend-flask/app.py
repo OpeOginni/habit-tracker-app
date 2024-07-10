@@ -1,10 +1,13 @@
 from flask import Flask
 
 import routes.habits
+import routes.analytics
 
 app = Flask(__name__)
 
 routes.habits.load(app)
+routes.analytics.load(app)
+
 
 @app.route('/')
 def root():

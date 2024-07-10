@@ -24,29 +24,29 @@ def load(app):
         habits = habit.get_habit_by_periodicity(periodicity)
         return {'habits': habits}, 200
     
-    @app.route("/api/habits/start/<string:habit_name>", methods=["POST"])
-    def start_habit(habit_name):
-        user_name = request.json.get('userName', None)
+    @app.route("/api/habits/track/<string:habit_name>", methods=["POST"])
+    def track_habit(habit_name):
+        user_name = request.json.get('username', None)
         if user_name is None:
             return {'message': 'User name is required'}, 400
         
         habit = Habit(user_name)
-        habit.start_habit(habit_name)
-        return {'message': 'Habit started'}, 200
+        habit.track_habit(habit_name)
+        return {'message': 'Started Tracking Habit'}, 200
     
-    @app.route("/api/habits/delete/<string:habit_name>", methods=["DELETE"])
-    def delete_habit(habit_name):
-        user_name = request.json.get('userName', None)
+    @app.route("/api/habits/untrack/<string:habit_name>", methods=["DELETE"])
+    def untrack_habit(habit_name):
+        user_name = request.json.get('username', None)
         if user_name is None:
             return {'message': 'User name is required'}, 400
 
         habit = Habit(user_name)
-        habit.delete_habit(habit_name)
-        return {'message': 'Habit deleted'}, 200
+        habit.untrack_habit(habit_name)
+        return {'message': 'Habit Untracked'}, 200
     
     @app.route("/api/habits/check-off/<string:habit_name>", methods=["POST"])
     def check_off_habit(habit_name):
-        user_name = request.json.get('userName', None)
+        user_name = request.json.get('username', None)
         if user_name is None:
             return {'message': 'User name is required'}, 400
         
@@ -54,9 +54,8 @@ def load(app):
         habit.check_off_habit(habit_name)
         return {'message': 'Habit checked off'}, 200
     
-    @app.route("/api/habits/streaks/<string:habit_name>", methods=["GET"])
-    def get_user_streaks(habit_name):
-        user_name = request.json.get('userName', None)
+    @app.route("/api/habits/user/<string:user_name>/streaks/<string:habit_name>", methods=["GET"])
+    def get_user_streaks(user_name, habit_name):
         if user_name is None:
             return {'message': 'User name is required'}, 400
         

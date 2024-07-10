@@ -6,14 +6,9 @@ def load(app):
     def get_user_tracked_habits(user_name):
         data = squlite_db.cursor().execute("SELECT * FROM public.user_habits WHERE user_name = ?", (user_name))
         return {'user': user_name, 'trackedHabits': data.fetchall()}, 200
-    
-    @app.route("/api/analytics/habits/<string:periodicity>", methods=["GET"])
-    def get_habits_by_periodicity(periodicity):
-        data = squlite_db.cursor().execute("SELECT name FROM public.habits WHERE periodicity = ?", (periodicity))
-        return {'habits': data.fetchall()}, 200
         
-    @app.route("/api/analytics/user/longest-streak/<string:user_name>", methods=["GET"])
-    def get_all_user_habita_longest_streak(user_name):
+    @app.route("/api/analytics/user/<string:user_name>/longest-streak", methods=["GET"])
+    def get_all_user_habits_longest_streak(user_name):
         data = squlite_db.cursor().execute(
             """SELECT 
                    user_habits.user_name,

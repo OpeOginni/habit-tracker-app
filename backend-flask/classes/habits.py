@@ -29,7 +29,7 @@ class Habit:
         return data.fetchone()
         
     # USER HABIT ACTIONS
-    def start_habit(self, habit_name):
+    def track_habit(self, habit_name):
         _habit_id = self.db.cursor().execute("SELECT id FROM public.habits WHERE habit_name = ?", (habit_name))
         habit_id = _habit_id.fetchone()
 
@@ -37,7 +37,7 @@ class Habit:
         
         self.db.commit()
         
-    def delete_habit(self, habit_name):
+    def untrack_habit(self, habit_name):
         self.db.cursor().execute("DELETE FROM public.user_habits WHERE habit_name = ?", (habit_name))
         self.db.commit()
         

@@ -18,33 +18,33 @@ class Habit:
         return data.fetchone()
     
     def get_habit_by_periodicity(self, periodicity):
-        data = self.cur.execute("SELECT * FROM habits WHERE periodicity = ?", (periodicity))
+        data = self.cur.execute("SELECT * FROM habits WHERE periodicity = ?", (periodicity,))
         return data.fetchall()
         
     # GET USER HABIT INFO
     def get_habit_current_streak(self, habit_name):
-        data = self.cur.execute("SELECT current_streak FROM user_habits WHERE name = ?", (habit_name))
+        data = self.cur.execute("SELECT current_streak FROM user_habits WHERE name = ?", (habit_name,))
         return data.fetchone()
         
     def get_habit_longest_streak(self, habit_name):
-        data = self.cur.execute("SELECT longest_streak FROM user_habits WHERE name = ?", (habit_name))
+        data = self.cur.execute("SELECT longest_streak FROM user_habits WHERE name = ?", (habit_name,))
         return data.fetchone()
         
     # USER HABIT ACTIONS
     def track_habit(self, habit_name):
-        _habit_id = self.cur.execute("SELECT id FROM habits WHERE name = ?", (habit_name))
+        _habit_id = self.cur.execute("SELECT id FROM habits WHERE name = ?", (habit_name,))
         habit_id = _habit_id.fetchone()
 
-        self.cur.execute("INSERT INTO user_habits (habit_id, user_name) VALUES (?, ?)", (habit_id, self.user_name))
+        self.cur.execute("INSERT INTO user_habits (habit_id, user_name) VALUES (?, ?)", (habit_id, self.user_name,))
         
         self.con.commit()
         
     def untrack_habit(self, habit_name):
-        self.cur.execute("DELETE FROM user_habits WHERE name = ?", (habit_name))
+        self.cur.execute("DELETE FROM user_habits WHERE name = ?", (habit_name,))
         self.con.commit()
         
     def check_off_habit(self, habit_name):
-        _user_habit_id = self.cur.execute("SELECT id FROM user_habits WHERE name = ? AND user_name = ?", (habit_name, self.user_name))
+        _user_habit_id = self.cur.execute("SELECT id FROM user_habits WHERE name = ? AND user_name = ?", (habit_name, self.user_name,))
         user_habit_id = _user_habit_id.fetchone()
         
         # Track Habit
@@ -78,25 +78,25 @@ class Habit:
     
     # PRIVATE HABIT METHODS
     def __increment_habit_streak(self, habit_name):
-        self.cur.execute("UPDATE user_habits SET current_streak = current_streak + 1 WHERE name = ? AND user_name = ?", (habit_name, self.user_name))
+        self.cur.execute("UPDATE user_habits SET current_streak = current_streak + 1 WHERE name = ? AND user_name = ?", (habit_name, self.user_name,))
         self.con.commit()
         
     def __reset_habit_streak(self, habit_name):
-        self.cur.execute("UPDATE user_habits SET current_streak = 0 WHERE name = ? AND user_name = ?", (habit_name, self.user_name))
+        self.cur.execute("UPDATE user_habits SET current_streak = 0 WHERE name = ? AND user_name = ?", (habit_name, self.user_name,))
         self.con.commit()
         
     def __increment_longest_streak(self, habit_name):
-        self.cur.execute("UPDATE user_habits SET longest_streak = current_streak + 1 WHERE name = ? AND user_name = ?", (habit_name, self.user_name))
+        self.cur.execute("UPDATE user_habits SET longest_streak = current_streak + 1 WHERE name = ? AND user_name = ?", (habit_name, self.user_name,))
         self.con.commit()
         
     def __track_habit(self, user_habit_id):
-        self.cur.execute("INSERT INTO habit_tracking (user_habit_id) VALUES (?)", (user_habit_id))
+        self.cur.execute("INSERT INTO habit_tracking (user_habit_id) VALUES (?)", (user_habit_id,))
         self.con.commit()
         
     def __get_last_completed_habit_tracked_date(self, user_habit_id):
-        data = self.cur.execute("SELECT completed_at FROM habit_tracking WHERE user_habit_id = ? ORDER BY completed_at DESC LIMIT 1", (user_habit_id))
+        data = self.cur.execute("SELECT completed_at FROM habit_tracking WHERE user_habit_id = ? ORDER BY completed_at DESC LIMIT 1", (user_habit_id,))
         return data.fetchone()
     
     def __get_habit_periodicity(self, habit_id):
-        data = self.cur.execute("SELECT periodicity FROM habits WHERE id = ?", (habit_id))
+        data = self.cur.execute("SELECT periodicity FROM habits WHERE id = ?", (habit_id,))
         return data.fetchone()

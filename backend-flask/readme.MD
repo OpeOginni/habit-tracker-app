@@ -1,8 +1,34 @@
-## Setting up SQLite3
+## Setting up & Seeding DB
 
-- https://www.prisma.io/dataguide/sqlite/setting-up-a-local-sqlite-database#setting-up-sqlite-on-macoss
+- Move to the `backend-flask` directory with the command
 
-- After installation run the command `sqlite3`
-- Create a new db with the command `.open --new <db_name>`
-- Quit the CLI with the command `.quit`
-- Now you have a sqlite DB running
+```bash
+cd backend-flask
+```
+
+- Create a `.env` file and copy the value in the `.env.example` file into it.
+
+- Create the DB and load the schema using the following command
+
+```bash
+python3 ./db/load-schema.py
+```
+
+- Seed the DB with Mock data for testing using the following command
+
+```bash
+python3 ./db/seed-db.py
+```
+
+- Notice a file `habit-tracker.db` was created this is the SQLite DB.
+
+## Running Flask Backend Service
+
+- Make sure your terminal is running on the `backend-flask` directory.
+- Then run the following command to start the Flask Server on local host
+
+```bash
+flask run
+```
+
+- The local server should be running on the this URL -> `http://127.0.0.1:5000`

@@ -15,7 +15,10 @@ class Habit:
     
     def get_habit(self, habit_name):
         data = self.cur.execute("SELECT * FROM habits WHERE name = ?", (habit_name,))
-        return data.fetchone()
+        habit = data.fetchone()
+        if(habit is None):
+            return "Habit not found"
+        return habit
     
     def get_habit_by_periodicity(self, periodicity):
         data = self.cur.execute("SELECT * FROM habits WHERE periodicity = ?", (periodicity,))
@@ -117,12 +120,21 @@ class Habit:
         
     def __get_last_completed_habit_tracked_date(self, user_habit_id):
         data = self.cur.execute("SELECT completed_at FROM habit_tracking WHERE user_habit_id = ? ORDER BY completed_at DESC LIMIT 1", (user_habit_id,))
-        return data.fetchone()
+        habit = data.fetchone()
+        if(habit is None):
+            return "Habit not found"
+        return habit['completed_at']
     
     def __get_habit_periodicity(self, habit_id):
         data = self.cur.execute("SELECT periodicity FROM habits WHERE id = ?", (habit_id,))
-        return data.fetchone()
+        habit = data.fetchone()
+        if(habit is None):
+            return "Habit not found"        
+        return habit['periodicity']
     
     def __get_habit_id(self, habit_name):
         data = self.cur.execute("SELECT id FROM habits WHERE name = ?", (habit_name,))
-        return data.fetchone()
+        habit = data.fetchone()
+        if(habit is None):
+            return "Habit not found"
+        return habit['id']

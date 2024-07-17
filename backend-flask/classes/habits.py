@@ -65,7 +65,11 @@ class Habit:
         habit_id = self.__get_habit_id(habit_name)
         
         _user_habit_id = self.cur.execute("SELECT id FROM user_habits WHERE id = ? AND user_name = ?", (habit_id, self.user_name,))
-        user_habit_id = _user_habit_id.fetchone()
+        data = _user_habit_id.fetchone()
+        if(data is None):
+            return "User is not tracking this habit"
+         
+        user_habit_id = data[id]
         
         # Track Habit
         self.track_habit(user_habit_id)

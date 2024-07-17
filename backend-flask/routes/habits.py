@@ -60,6 +60,10 @@ def load(app):
             return {'message': 'User name is required'}, 400
         
         habit = Habit(user_name)
-        current_streak = habit.get_habit_current_streak(habit_name)
-        longest_streak = habit.get_habit_longest_streak(habit_name)
-        return {'habit_name': habit_name, 'currentStreak': current_streak, 'longestStreak': longest_streak}, 200
+        current_streak_data = habit.get_habit_current_streak(habit_name)
+        longest_streak_data = habit.get_habit_longest_streak(habit_name)
+        return {'habit_name': habit_name,
+                'user_name': user_name,
+                'currentStreak': current_streak_data['current_streak'],
+                'longestStreak': longest_streak_data['longest_streak']
+                }, 200

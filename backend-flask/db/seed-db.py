@@ -5,6 +5,8 @@ import sqlite3
 load_dotenv()
 
 def loadSchema():
+    '''
+    '''
     __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
     
@@ -27,4 +29,4 @@ def loadSchema():
     print('Seeding completed')
 loadSchema()
 
-# python3 ./db/seed-db.py
+# Command to Run this Script -> python3 ./db/seed-db.py

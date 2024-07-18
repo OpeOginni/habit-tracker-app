@@ -1,6 +1,7 @@
 # flask
 from db.db import squlite_db
 
+# Using this load function we abstract the Routes for the Analytics to a new file and we 
 def load(app):
     @app.route("/api/analytics/habits/tracking/<string:user_name>", methods=["GET"])
     def get_user_tracked_habits(user_name):

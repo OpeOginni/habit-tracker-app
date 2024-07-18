@@ -2,11 +2,13 @@ import os
 import sqlite3
 from flask import current_app as app
 
+# This Is the SQLite Connection Class, from this class all parts of the app can have access to the Database
 class SqliteDB:
     def __init__(self):
         self.init_pool()
     
     # https://stackoverflow.com/a/68991192
+    # We added this function to return our DB objects in a nice readable JSON format
     def __row_to_dict(self, cursor: sqlite3.Cursor, row: sqlite3.Row) -> dict:
       data = {}
       for idx, col in enumerate(cursor.description):
@@ -23,7 +25,7 @@ class SqliteDB:
 
             self.conn = conn
             self.cursor = conn.cursor()
-        # Handle errors
+        # Handle error
         except sqlite3.Error as error:
             print('Error occurred - ', error)
 

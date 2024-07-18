@@ -2,9 +2,13 @@ import os
 from dotenv import load_dotenv
 import sqlite3
 
+# We need this requiremnt to be able to read the SQLite DB File name from our .env file
 load_dotenv()
 
+# This Function Reads the SQL code for our Schema and runs it on our DB
 def loadSchema():
+    '''
+    '''
     __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
     
@@ -27,4 +31,4 @@ def loadSchema():
     print('Schema loaded')
 loadSchema()
 
-# python3 ./db/load-schema.py
+# Command to Run this Script -> python3 ./db/load-schema.py

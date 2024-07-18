@@ -16,6 +16,8 @@ def load(app):
     def get_habit(habit_name):
         habit = Habit()
         habit_data = habit.get_habit(habit_name)
+        if(habit_data['error'] is not None):
+            return {'error': habit_data['error']}, habit_data['code']
         return {'habit': habit_data}, 200
     
     @app.route("/api/habits/periodicity/<string:periodicity>", methods=["GET"])
@@ -23,6 +25,16 @@ def load(app):
         habit = Habit()
         habits = habit.get_habit_by_periodicity(periodicity)
         return {'habits': habits}, 200
+    
+    @app.route("/api/habits/create", methods=["POST"])
+    def createNewHabit():
+        habit_name = request.json.get('habit_name', None)
+        description = request.json.get('description', None)
+        periodicity = request.json.get('periodicity', None)
+
+        habit = Habit()
+        habit.create_habit(habit_name, description, periodicity)
+        return {'message': 'Habit Created'}, 201
     
     @app.route("/api/habits/track/<string:habit_name>", methods=["POST"])
     def track_habit(habit_name):

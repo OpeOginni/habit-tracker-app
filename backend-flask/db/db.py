@@ -2,20 +2,41 @@ import os
 import sqlite3
 from flask import current_app as app
 
-# This Is the SQLite Connection Class, from this class all parts of the app can have access to the Database
+# This is the SQLite Connection Class. 
+# From this class, all parts of the app can have access to the Database.
 class SqliteDB:
     def __init__(self):
+        """
+        Initialize the SqliteDB class and set up the connection pool.
+        """
         self.init_pool()
     
-    # https://stackoverflow.com/a/68991192
-    # We added this function to return our DB objects in a nice readable JSON format
     def __row_to_dict(self, cursor: sqlite3.Cursor, row: sqlite3.Row) -> dict:
-      data = {}
-      for idx, col in enumerate(cursor.description):
-          data[col[0]] = row[idx]
-      return data
+        """
+        Convert a SQLite row object to a dictionary.
+
+        Parameters:
+        ----------
+        cursor : sqlite3.Cursor
+            The SQLite cursor object.
+        row : sqlite3.Row
+            The SQLite row object.
+
+        Returns:
+        -------
+        dict
+            A dictionary representing the row data.
+        """
+        data = {}
+        for idx, col in enumerate(cursor.description):
+            data[col[0]] = row[idx]
+        return data
     
     def init_pool(self):
+        """
+        Initialize the connection pool by connecting to the SQLite database 
+        and setting the row factory to return rows as dictionaries.
+        """
         try:
             # Connect to DB and create a cursor
             DB_FILE_NAME = os.getenv("DB_FILE_NAME")
@@ -29,4 +50,5 @@ class SqliteDB:
         except sqlite3.Error as error:
             print('Error occurred - ', error)
 
+# Global instance of the SqliteDB class
 squlite_db = SqliteDB()

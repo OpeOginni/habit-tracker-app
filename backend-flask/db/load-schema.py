@@ -2,19 +2,29 @@ import os
 from dotenv import load_dotenv
 import sqlite3
 
-# We need this requiremnt to be able to read the SQLite DB File name from our .env file
+# We need this requirement to be able to read the SQLite DB file name from our .env file
 load_dotenv()
 
-# This Function Reads the SQL code for our Schema and runs it on our DB
 def loadSchema():
-    '''
-    '''
+    """
+    Reads the SQL code for the schema from a file and runs it on the SQLite database.
+
+    This function:
+    - Reads the schema SQL file from the 'sql' directory.
+    - Connects to the SQLite database using the file name specified in the .env file.
+    - Executes the schema SQL script to create the necessary tables and structure in the database.
+    
+    Raises:
+    -------
+    sqlite3.Error
+        If an error occurs during the database connection or schema execution.
+    """
     __location__ = os.path.realpath(
-    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        os.path.join(os.getcwd(), os.path.dirname(__file__)))
     
     schema_file_path = os.path.join(__location__, 'sql', 'schema.sql')
 
-    # Read the Schema.sql file
+    # Read the schema.sql file
     schema_str = open(schema_file_path).read()
     
     try:
@@ -23,12 +33,16 @@ def loadSchema():
     
         sqliteConnection = sqlite3.connect(DB_FILE_NAME, check_same_thread=False)
     
-        # Execute the Schema and Load it in
+        # Execute the schema and load it in
         sqliteConnection.cursor().executescript(schema_str)
+        sqliteConnection.commit()
     except sqlite3.Error as error:
         print('Error occurred - ', error)
+    finally:
+        if sqliteConnection:
+            sqliteConnection.close()
     
     print('Schema loaded')
-loadSchema()
 
-# Command to Run this Script -> python3 ./db/load-schema.py
+# Command to run this script -> python3 ./db/load-schema.py
+loadSchema()

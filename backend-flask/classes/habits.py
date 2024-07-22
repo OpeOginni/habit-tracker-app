@@ -255,7 +255,6 @@ class Habit:
         habit_id = _habit_id['id']
         
         user_tracked_habit_id = self.__get_user_tracked_habit_id(habit_id)
-        print(user_tracked_habit_id)
         
         if user_tracked_habit_id.get('error'):
             return user_tracked_habit_id
@@ -449,7 +448,6 @@ class Habit:
         dict or tuple
             The ID of the habit or an error message if not found.
         """
-        print(habit_name)
         data = self.cur.execute("SELECT id FROM habits WHERE name = ?", (habit_name,))
         habit = data.fetchone()
         if habit is None:
@@ -459,7 +457,6 @@ class Habit:
     def __get_user_tracked_habit_id(self, habit_id):
         data = self.cur.execute("SELECT id FROM user_habits WHERE user_name = ? AND habit_id = ?", (self.user_name, habit_id,))
         user_habit = data.fetchone()
-        print(user_habit)
         if user_habit is None:
             return {"error": "Habit Not Tracked By User", "code": 404}
         return user_habit

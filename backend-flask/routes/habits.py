@@ -174,7 +174,7 @@ def load(app):
         
         habit = Habit(user_name)
         response = habit.check_off_habit(habit_name)
-        if response['error']:
+        if response is not None and response['error']:
             return {'error': response['error']}, response['code']
         return {'message': 'Habit checked off'}, 200
 

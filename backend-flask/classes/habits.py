@@ -294,8 +294,10 @@ class Habit:
 
         last_completed_date = self.__get_last_completed_habit_tracked_date(user_tracked_habit_id['id'])
         periodicity = self.__get_habit_periodicity(habit_id)
-        current_streak = self.get_habit_current_streak(habit_name)
-        longest_streak = self.get_habit_longest_streak(habit_name)
+        _current_steak = self.get_habit_current_streak(habit_name)
+        current_streak = _current_steak['current_streak']
+        _longest_streak = self.get_habit_longest_streak(habit_name)
+        longest_streak = _longest_streak['longest_streak']
 
         if last_completed_date:
             last_completed_date = last_completed_date[0]
@@ -314,7 +316,7 @@ class Habit:
         else:
             self.__increment_habit_streak(habit_name)
 
-        if current_streak[0] + 1 > longest_streak[0]:
+        if (current_streak + 1) > longest_streak:
             self.__increment_longest_streak(habit_name)
 
     def __increment_habit_streak(self, habit_name):
@@ -408,11 +410,11 @@ class Habit:
             The last completed date or an error message if not found.
         """
         data = self.cur.execute("SELECT completed_at FROM habit_tracker WHERE user_habit_id = ? ORDER BY completed_at DESC LIMIT 1", (user_habit_id,))
-        habit = data.fetchone()
-        if habit is None:
-            return {"error": "Habit not found", "code": 404}
+        last_completed = data.fetchone()
+        if last_completed is None:
+            return None
 
-        return habit['completed_at']
+        return last_completed['completed_at']
 
     def __get_habit_periodicity(self, habit_id):
         """

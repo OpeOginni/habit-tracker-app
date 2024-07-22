@@ -22,7 +22,7 @@ python3 ./db/seed-db.py
 
 - Notice a file `habit-tracker.db` was created this is the SQLite DB.
 
-## Running Flask Backend Service
+## Running the Flask Backend Service
 
 - Make sure your terminal is running on the `backend-flask` directory.
 - Then run the following command to start the Flask Server on local host
@@ -32,3 +32,12 @@ flask run
 ```
 
 - The local server should be running on the this URL -> `http://127.0.0.1:5000`
+
+## Testing the Flask Backend Service
+
+- Make sure your terminal is running on the `backend-flask` directory.
+- Then run the following command to run the Unit Tests
+
+```bash
+pytest
+```

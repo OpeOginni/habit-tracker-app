@@ -43,3 +43,5 @@ flask run
 - Python
 - Flask
 - SQLite3
+
+Check out the [Backend-Flask Readme](https://github.com/OpeOginni/habit-tracker-app/blob/main/backend-flask/readme.MD) for more intructions on how to run the server and run tests.

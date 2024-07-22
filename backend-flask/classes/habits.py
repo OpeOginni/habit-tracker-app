@@ -456,9 +456,22 @@ class Habit:
             return {"error": "Habit not found", "code": 404}
         return habit
     
-    def __get_user_tracked_habit_id(self, habit_id):
-        data = self.cur.execute("SELECT id FROM user_habits WHERE user_name = ? AND habit_id = ?", (self.user_name, habit_id,))
-        user_habit = data.fetchone()
-        if user_habit is None:
-            return {"error": "Habit Not Tracked By User", "code": 404}
-        return user_habit
+def __get_user_tracked_habit_id(self, habit_id):
+    """
+    Fetches the user's tracked habit ID based on the habit ID.
+
+    Parameters:
+    ----------
+    habit_id : int
+        The ID of the habit.
+
+    Returns:
+    -------
+    dict or int
+        The user's tracked habit ID or an error message if not found.
+    """
+    data = self.cur.execute("SELECT id FROM user_habits WHERE user_name = ? AND habit_id = ?", (self.user_name, habit_id,))
+    user_habit = data.fetchone()
+    if user_habit is None:
+        return {"error": "Habit Not Tracked By User", "code": 404}
+    return user_habit

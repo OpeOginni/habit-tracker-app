@@ -141,8 +141,12 @@ class Habit:
         data = self.cur.execute("SELECT * FROM habits WHERE name = ?", (habit_name,))
         habit = data.fetchone()
         if habit is not None:
-            return {"error": "Habit Already Exists", "code": 400}
-        # Add code here to insert the new habit into the database
+            return {"error": "Habit with the same name already exists", "code": 400}
+        
+        self.cur.execute("INSERT INTO habits (name, description, periodicity) VALUES (?, ?, ?)", (habit_name, description, periodicity,))
+        self.con.commit()
+        
+        return {"message": "Habit Created"}
 
     def get_habit_current_streak(self, habit_name):
         """
@@ -161,7 +165,12 @@ class Habit:
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
 
-        habit_id = self.__get_habit_id(habit_name)
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
 
         data = self.cur.execute("SELECT current_streak FROM user_habits WHERE habit_id = ? AND user_name = ?", (habit_id, self.user_name,))
         return data.fetchone()
@@ -182,8 +191,12 @@ class Habit:
         """
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
-        habit_id = self.__get_habit_id(habit_name)
-
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
         data = self.cur.execute("SELECT longest_streak FROM user_habits WHERE habit_id = ? AND user_name = ?", (habit_id, self.user_name,))
         return data.fetchone()
 
@@ -203,10 +216,21 @@ class Habit:
         """
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
-        habit_id = self.__get_habit_id(habit_name)
-
-        self.cur.execute("INSERT INTO user_habits (habit_id, user_name) VALUES (?, ?)", (habit_id, self.user_name,))
-        self.con.commit()
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
+        user_tracked_habit_id = self.__get_user_tracked_habit_id(habit_id)
+        
+        if user_tracked_habit_id.get('error'):
+            self.cur.execute("INSERT INTO user_habits (habit_id, user_name) VALUES (?, ?)", (habit_id, self.user_name,))
+            self.con.commit()
+            return {"message": "Started Tracking Habit"}
+        else:
+            return {"error": "User is already tracking this habit", "code": 400}
+        
 
     def untrack_habit(self, habit_name):
         """
@@ -224,7 +248,17 @@ class Habit:
         """
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
-        habit_id = self.__get_habit_id(habit_name)
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
+        user_tracked_habit_id = self.__get_user_tracked_habit_id(habit_id)
+        print(user_tracked_habit_id)
+        
+        if user_tracked_habit_id.get('error'):
+            return user_tracked_habit_id
 
         self.cur.execute("DELETE FROM user_habits WHERE habit_id = ? AND user_name = ?", (habit_id, self.user_name,))
         self.con.commit()
@@ -245,19 +279,21 @@ class Habit:
         """
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
-        habit_id = self.__get_habit_id(habit_name)
-
-        _user_habit_id = self.cur.execute("SELECT id FROM user_habits WHERE id = ? AND user_name = ?", (habit_id, self.user_name,))
-        data = _user_habit_id.fetchone()
-        if data is None:
-            return {"error": "User is not tracking this habit", "code": 400}
-
-        user_habit_id = data['id']
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
+        user_tracked_habit_id = self.__get_user_tracked_habit_id(habit_id)
+        
+        if user_tracked_habit_id.get('error'):
+            return user_tracked_habit_id
 
         # Track Habit
-        self.track_habit(user_habit_id)
+        self.track_habit(user_tracked_habit_id['id'])
 
-        last_completed_date = self.__get_last_completed_habit_tracked_date(user_habit_id)
+        last_completed_date = self.__get_last_completed_habit_tracked_date(user_tracked_habit_id['id'])
         periodicity = self.__get_habit_periodicity(habit_id)
         current_streak = self.get_habit_current_streak(habit_name)
         longest_streak = self.get_habit_longest_streak(habit_name)
@@ -299,7 +335,12 @@ class Habit:
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
 
-        habit_id = self.__get_habit_id(habit_name)
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
         self.cur.execute("UPDATE user_habits SET current_streak = current_streak + 1 WHERE habit_id = ? AND user_name = ?", (habit_id, self.user_name,))
         self.con.commit()
 
@@ -319,7 +360,12 @@ class Habit:
         """
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
-        habit_id = self.__get_habit_id(habit_name)
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
         self.cur.execute("UPDATE user_habits SET current_streak = 0 WHERE habit_id = ? AND user_name = ?", (habit_id, self.user_name,))
         self.con.commit()
 
@@ -339,7 +385,12 @@ class Habit:
         """
         if self.user_name is None:
             return {"error": "user_name must be provided", "code": 400}
-        habit_id = self.__get_habit_id(habit_name)
+        _habit_id = self.__get_habit_id(habit_name)
+        if _habit_id.get('error'):
+            return _habit_id
+        
+        habit_id = _habit_id['id']
+        
         self.cur.execute("UPDATE user_habits SET longest_streak = current_streak WHERE habit_id = ? AND user_name = ?", (habit_id, self.user_name,))
         self.con.commit()
 
@@ -398,8 +449,17 @@ class Habit:
         dict or tuple
             The ID of the habit or an error message if not found.
         """
+        print(habit_name)
         data = self.cur.execute("SELECT id FROM habits WHERE name = ?", (habit_name,))
         habit = data.fetchone()
         if habit is None:
             return {"error": "Habit not found", "code": 404}
-        return habit['id']
+        return habit
+    
+    def __get_user_tracked_habit_id(self, habit_id):
+        data = self.cur.execute("SELECT id FROM user_habits WHERE user_name = ? AND habit_id = ?", (self.user_name, habit_id,))
+        user_habit = data.fetchone()
+        print(user_habit)
+        if user_habit is None:
+            return {"error": "Habit Not Tracked By User", "code": 404}
+        return user_habit

@@ -4,3 +4,6 @@ flask-cors
 sqlite3
 
 python-dotenv
+
+pytest
+pytest-env

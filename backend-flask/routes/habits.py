@@ -50,7 +50,7 @@ def load(app):
         """
         habit = Habit()
         habit_data = habit.get_habit(habit_name)
-        if habit_data['error'] is not None:
+        if habit_data.get('error'):
             return {'error': habit_data['error']}, habit_data['code']
         return {'habit': habit_data}, 200
 
@@ -92,7 +92,9 @@ def load(app):
         periodicity = request.json.get('periodicity', None)
 
         habit = Habit()
-        habit.create_habit(habit_name, description, periodicity)
+        response = habit.create_habit(habit_name, description, periodicity)
+        if response.get('error'):
+            return {'error': response['error']}, response['code']
         return {'message': 'Habit Created'}, 201
 
     @app.route("/api/habits/track/<string:habit_name>", methods=["POST"])
@@ -117,8 +119,10 @@ def load(app):
             return {'message': 'User name is required'}, 400
         
         habit = Habit(user_name)
-        habit.track_habit(habit_name)
-        return {'message': 'Started Tracking Habit'}, 200
+        response = habit.track_habit(habit_name)
+        if response.get('error'):
+            return {'error': response['error']}, response['code']
+        return {'message': response['message']}, 200
 
     @app.route("/api/habits/untrack/<string:habit_name>", methods=["DELETE"])
     def untrack_habit(habit_name):
@@ -142,7 +146,9 @@ def load(app):
             return {'message': 'User name is required'}, 400
 
         habit = Habit(user_name)
-        habit.untrack_habit(habit_name)
+        response = habit.untrack_habit(habit_name)
+        if response is not None and response['error']:
+            return {'error': response['error']}, response['code']
         return {'message': 'Habit Untracked'}, 200
 
     @app.route("/api/habits/check-off/<string:habit_name>", methods=["POST"])
@@ -167,7 +173,10 @@ def load(app):
             return {'message': 'User name is required'}, 400
         
         habit = Habit(user_name)
-        habit.check_off_habit(habit_name)
+        response = habit.check_off_habit(habit_name)
+        print(response)
+        if response['error']:
+            return {'error': response['error']}, response['code']
         return {'message': 'Habit checked off'}, 200
 
     @app.route("/api/habits/user/<string:user_name>/streaks/<string:habit_name>", methods=["GET"])

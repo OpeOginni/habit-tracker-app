@@ -82,7 +82,15 @@ def load(app):
         int
             The HTTP status code.
         """
-        data = squlite_db.cursor.execute("SELECT longest_streak FROM user_habits WHERE user_name = ? AND habit_name = ?", (user_name, habit_name,))
+        
+        _habit_id = squlite_db.cursor.execute("SELECT id FROM habits WHERE name = ?", (habit_name,))
+        habit = _habit_id.fetchone()
+        if habit is None:
+            return {'message': 'Habit not found'}, 404
+        
+        habit_id = habit['id']
+
+        data = squlite_db.cursor.execute("SELECT longest_streak FROM user_habits WHERE user_name = ? AND habit_id = ?", (user_name, habit_id,))
         return {'data': data.fetchone()}, 200
 
     @app.route("/api/analytics/user/<string:user_name>/tracked-timestamps/<string:habit_name>", methods=["GET"])

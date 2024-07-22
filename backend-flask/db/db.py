@@ -5,10 +5,11 @@ from flask import current_app as app
 # This is the SQLite Connection Class. 
 # From this class, all parts of the app can have access to the Database.
 class SqliteDB:
-    def __init__(self):
+    def __init__(self, testDB=None):
         """
         Initialize the SqliteDB class and set up the connection pool.
         """
+        self.testDB = testDB
         self.init_pool()
     
     def __row_to_dict(self, cursor: sqlite3.Cursor, row: sqlite3.Row) -> dict:
@@ -39,9 +40,8 @@ class SqliteDB:
         """
         try:
             # Connect to DB and create a cursor
-            DB_FILE_NAME = os.getenv("DB_FILE_NAME")
-
-            conn = sqlite3.connect(DB_FILE_NAME, check_same_thread=False)
+            
+            conn = sqlite3.connect(os.getenv("DB_FILE_NAME"), check_same_thread=False)
             conn.row_factory = self.__row_to_dict
 
             self.conn = conn

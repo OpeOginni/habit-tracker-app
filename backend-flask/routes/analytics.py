@@ -1,6 +1,7 @@
 # flask
 from db.db import squlite_db
 
+# This function will load all the analytics routes into the Flask app that is passed as a param
 def load(app):
     """
     Load the analytics routes into the given Flask application.

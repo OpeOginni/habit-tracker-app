@@ -4,6 +4,7 @@ import tempfile
 from flask import Flask
 from db.db import SqliteDB
 from routes.analytics import load as load_analytics
+from routes.habits import load as load_habits
 
 @pytest.fixture
 def app():
@@ -24,12 +25,9 @@ def app():
 
     # Load analytics routes
     load_analytics(app)
+    load_habits(app)
 
     yield app
-
-    # Clean up the database
-    # os.unlink(app.config["DATABASE"])
-    # os.remove("demofile.txt")
 
 @pytest.fixture
 def client(app):
@@ -64,6 +62,21 @@ def test_find_user_habit_longest_streak(client):
     data = response.get_json()
     assert 'data' in data
     assert 'longest_streak' in data['data']
+    assert data['data']['longest_streak'] == 8 # Alice's longest streak for the 'Read' habit according to the seed data
+    
+def test_get_user_habit_current_streak_after_check_off(client):
+    """Test fetching the current streak for a habit after checking it off."""
+    response = client.post("/api/habits/check-off/Read", json={'username': 'Alice'})
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'message' in data
+    assert data['message'] == 'Habit checked off'
+
+    response = client.get("/api/habits/user/Alice/streaks/Read")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'current_streak' in data
+    assert data['current_streak'] == 1
 
 def test_get_all_habits_tracked_timestamps(client):
     """Test fetching all timestamps for tracked habits of a user."""

@@ -1,6 +1,8 @@
 import datetime
 from db.db import squlite_db
 
+# Habit class that encasulates all habit related queries and updates
+# The habit class handles all direct calls to the SQLite DB
 class Habit:
     """
     A class to represent a habit and handle all related queries and updates in the SQLite database.
@@ -298,21 +300,28 @@ class Habit:
         current_streak = _current_steak['current_streak']
         _longest_streak = self.get_habit_longest_streak(habit_name)
         longest_streak = _longest_streak['longest_streak']
+        
+        print('last_completed_date', last_completed_date)
 
         if last_completed_date:
-            last_completed_date = last_completed_date[0]
+            last_completed_date_time_obj = datetime.datetime.strptime(last_completed_date, '%Y-%m-%d %H:%M:%S')
+            
+            last_completed_date_str = last_completed_date_time_obj.strftime('%Y-%m-%d')
+
             today = datetime.date.today()
+            
             yesterday = today - datetime.timedelta(days=1)
             last_week = today - datetime.timedelta(days=7)
 
-            if last_completed_date == today:
+            if last_completed_date_str == today:
                 return {"error": "Habit already checked off today", "code": 400}
-            elif periodicity == 'DAILY' and last_completed_date == yesterday:
+            elif periodicity == 'DAILY' and last_completed_date_str == yesterday:
                 self.__increment_habit_streak(habit_name)
-            elif periodicity == 'WEEKLY' and last_week <= last_completed_date <= yesterday:
+            elif periodicity == 'WEEKLY' and last_week <= last_completed_date_str <= yesterday:
                 self.__increment_habit_streak(habit_name)
             else:
                 self.__reset_habit_streak(habit_name)
+                self.__increment_habit_streak(habit_name)
         else:
             self.__increment_habit_streak(habit_name)
 
@@ -456,22 +465,22 @@ class Habit:
             return {"error": "Habit not found", "code": 404}
         return habit
     
-def __get_user_tracked_habit_id(self, habit_id):
-    """
-    Fetches the user's tracked habit ID based on the habit ID.
+    def __get_user_tracked_habit_id(self, habit_id):
+        """
+        Fetches the user's tracked habit ID based on the habit ID.
 
-    Parameters:
-    ----------
-    habit_id : int
-        The ID of the habit.
+        Parameters:
+        ----------
+        habit_id : int
+            The ID of the habit.
 
-    Returns:
-    -------
-    dict or int
-        The user's tracked habit ID or an error message if not found.
-    """
-    data = self.cur.execute("SELECT id FROM user_habits WHERE user_name = ? AND habit_id = ?", (self.user_name, habit_id,))
-    user_habit = data.fetchone()
-    if user_habit is None:
-        return {"error": "Habit Not Tracked By User", "code": 404}
-    return user_habit
+        Returns:
+        -------
+        dict or int
+            The user's tracked habit ID or an error message if not found.
+        """
+        data = self.cur.execute("SELECT id FROM user_habits WHERE user_name = ? AND habit_id = ?", (self.user_name, habit_id,))
+        user_habit = data.fetchone()
+        if user_habit is None:
+            return {"error": "Habit Not Tracked By User", "code": 404}
+        return user_habit

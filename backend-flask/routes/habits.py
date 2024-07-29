@@ -5,6 +5,9 @@ from flask_cors import cross_origin
 # class
 from classes.habits import Habit
 
+# This function will load all the habits routes into the Flask app that is passed as a param
+
+#The individual routes just interact using the Habit Class
 def load(app):
     """
     Load the habit-related routes into the given Flask application.
@@ -205,6 +208,6 @@ def load(app):
         longest_streak_data = habit.get_habit_longest_streak(habit_name)
         return {'habit_name': habit_name,
                 'user_name': user_name,
-                'currentStreak': current_streak_data['current_streak'],
-                'longestStreak': longest_streak_data['longest_streak']
+                'current_streak': current_streak_data['current_streak'],
+                'longest_streak': longest_streak_data['longest_streak']
                 }, 200

@@ -27,10 +27,6 @@ def app():
 
     yield app
 
-    # Clean up the database
-    # os.unlink(app.config["DATABASE"])
-    # os.remove(app.config["DATABASE"])
-
 @pytest.fixture
 def client(app):
     """A test client for the app."""

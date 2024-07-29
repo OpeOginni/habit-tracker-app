@@ -35,7 +35,7 @@ flask run
 
 ## Testing the Flask Backend Service
 
-- Make sure your terminal is running on the `backend-flask` directory.
+- Make sure your terminal is currently on the `backend-flask` directory.
 - Then run the following command to run the Unit Tests
 
 ```bash
